@@ -24,6 +24,11 @@ typedef enum {
     STATEMENT_INSERT,
 } StatementType;
 
+typedef enum {
+    EXECUTE_TABLE_FULL,
+    EXECUTE_SUCCESS,
+} ExecuteResult;
+
 
 typedef struct InputBuffer {
     char* buffer;
@@ -60,9 +65,9 @@ extern const uint32_t TABLE_MAX_ROW;
 
 void close_input_buffer(InputBuffer_t*);
 void read_input(InputBuffer_t*);
-MetaCommandResult do_meta_command(InputBuffer_t*);
+MetaCommandResult do_meta_command(InputBuffer_t*, Table_t*);
 PrepareResult prepare_statement(InputBuffer_t*, Statement_t*);
-void execute_statement(Statement_t*);
+ExecuteResult execute_statement(Statement_t*, Table_t*);
 void serialize_row(Row_t* source, void* destination); 
 void deserialize_row(void* source, Row_t* destination);
 void* row_slot(Table_t* table, uint32_t row_num);
