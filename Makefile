@@ -1,21 +1,22 @@
 CC = gcc
 CFLAGS = -g -O2
-TARGET = cshell
+TARGET = harborDB
 
 BUILD_DIR = build
 BIN_DIR = bin
+SRC_DIR = src
 
-SOURCES = repl.c 
+SOURCES = main.c repl.c vm.c parser.c storage.c
 OBJECTS = $(patsubst %.c, $(BUILD_DIR)/%.o, $(SOURCES))
 
 all: $(BIN_DIR)/$(TARGET)
 	$(BIN_DIR)/$(TARGET)
 
 $(BIN_DIR)/$(TARGET): $(OBJECTS) | $(BIN_DIR)
-	$(CC) $^ -o $@
+	@$(CC) $^ -o $@
 
-$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
