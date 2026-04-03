@@ -2,7 +2,7 @@
 #include "storage.h"
 
 ExecuteResult execute_insert(Statement_t* statement, Table_t* table){
-    if(table->num_rows > TABLE_MAX_ROW) {
+    if(table->num_rows >= TABLE_MAX_ROW) {
         return EXECUTE_TABLE_FULL;
     }
 

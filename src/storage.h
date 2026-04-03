@@ -4,13 +4,13 @@
 // (Struct*)0 -> is a null pointer
 #define size_of_attribute(Struct,attribute)  sizeof(((Struct*)0)->attribute) 
 #define COLUMN_USERNAME_SIZE 32
-#define COLUMN_EMAIL_SIZE 256
+#define COLUMN_EMAIL_SIZE 255
 #define TABLE_MAX_PAGE 100
 
 typedef struct Row {
     uint32_t id;    
-    char username[COLUMN_USERNAME_SIZE];
-    char email[COLUMN_EMAIL_SIZE];
+    char username[COLUMN_USERNAME_SIZE+1];
+    char email[COLUMN_EMAIL_SIZE+1];
 } Row_t;
 
 typedef struct Table {

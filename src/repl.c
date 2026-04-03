@@ -46,11 +46,13 @@ MetaCommandResult do_meta_command(InputBuffer_t* inputBuffer, Table_t* table) {
     }
 }
 
-void startREPL() {
+void startREPL(int test_mode) {
     Table_t* table = new_table();
     InputBuffer_t* inputBuffer = new_input_buffer();
     while(true) {
-        print_prompt();
+        if (!test_mode) {
+            print_prompt();
+        }
         read_input(inputBuffer);
 
         if(inputBuffer->buffer[0]=='.') {
@@ -70,6 +72,12 @@ void startREPL() {
             case PREPARE_SYNTAX_ERROR: 
                 printf("Prepare syntax error. Could not parse statement\n");
                 continue;
+            case PREPARE_NEGATIVE_ID : 
+                printf("Id must be positive\n");
+                continue;
+            case PREPARE_STRING_TOO_LONG: 
+                printf("String too long\n");
+                continue;
             case PREPARE_UNRECOGNISED_STATEMENT : 
                 printf("Unrecognised keyword at start of %s\n", inputBuffer->buffer);
                 continue;
@@ -77,10 +85,10 @@ void startREPL() {
 
         switch(execute_statement(&statement, table)) {
             case EXECUTE_SUCCESS : 
-                printf("Exectued\n");
+                printf("Executed\n");
                 break;
             case EXECUTE_TABLE_FULL: 
-                printf("Table Full.\n");
+                printf("Table Full\n");
                     break;
             case EXECUTE_FAILURE:
                 printf("Execution Error\n");

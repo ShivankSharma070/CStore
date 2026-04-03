@@ -4,6 +4,8 @@
 typedef enum {
     PREPARE_SUCCESS,
     PREPARE_SYNTAX_ERROR,
+    PREPARE_NEGATIVE_ID,
+    PREPARE_STRING_TOO_LONG,
     PREPARE_UNRECOGNISED_STATEMENT
 } PrepareResult;
 
@@ -19,4 +21,5 @@ typedef struct Statement {
 } Statement_t; 
 
 
+PrepareResult prepare_insert(InputBuffer_t*, Statement_t*);
 PrepareResult prepare_statement(InputBuffer_t*, Statement_t*);
