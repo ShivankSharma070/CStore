@@ -1,6 +1,8 @@
 *.out
 *.exe
 *.gch
+*.db
 
 bin/
 build/
+__pycache__/

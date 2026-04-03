@@ -18,4 +18,4 @@ InputBuffer_t* new_input_buffer();
 void close_input_buffer(InputBuffer_t*);
 void read_input(InputBuffer_t*);
 MetaCommandResult do_meta_command(InputBuffer_t*, Table_t*);
-void startREPL(int);
+void startREPL(int, Table_t* );

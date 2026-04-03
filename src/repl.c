@@ -39,15 +39,14 @@ void read_input(InputBuffer_t* inputBuffer) {
 
 MetaCommandResult do_meta_command(InputBuffer_t* inputBuffer, Table_t* table) {
     if(strcmp(inputBuffer->buffer, ".exit")== 0 ) {
-        free_table(table);
+            db_close(table);
             exit(EXIT_SUCCESS);
     } else {
         return META_COMMAND_UNRECOGNISED_COMMAND;
     }
 }
 
-void startREPL(int test_mode) {
-    Table_t* table = new_table();
+void startREPL(int test_mode, Table_t* table) {
     InputBuffer_t* inputBuffer = new_input_buffer();
     while(true) {
         if (!test_mode) {
