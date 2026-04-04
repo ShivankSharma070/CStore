@@ -64,12 +64,30 @@ void* get_page(Pager_t* pager, uint32_t page_num) {
     return pager->pages[page_num];
 }
 
-void* row_slot(Table_t* table, uint32_t row_num) {
+/*
+* cursor_value returns a pointer to the start of current row.
+* It calculates page_num based on current row and rows per page.
+* Then uses 'get_page()' to get the pointer to page.
+* Calculates offsets and then return memory location (page+offset)
+*/
+void* cursor_value(Cursor_t* cursor) {
+    uint32_t row_num = cursor->row_num;
     uint32_t page_num = row_num / ROW_PER_PAGE;
-    void* page = get_page(table->pager, page_num);
+    void* page = get_page(cursor->table->pager, page_num);
     uint32_t row_offset = row_num % ROW_PER_PAGE;
     uint32_t byte_offset = row_offset * ROW_SIZE;
     return page+byte_offset;
+}
+
+/*
+    * cursor_advance increments the row number for the cursor
+    * if after incrementing, the cursor points the last row of table, it updates cursor->end_of_table 
+*/
+void cursor_advance(Cursor_t* cursor) {
+    cursor->row_num += 1;
+    if (cursor->row_num >= cursor->table->num_rows) {
+        cursor->end_of_table = true;
+    }
 }
 
 Pager_t* pager_open(const char* filename) {
@@ -122,10 +140,12 @@ void pager_flush(Pager_t* pager, uint32_t page_num,uint32_t size) {
    return; 
 }
 
+// db_close flushes the table to disk, before deallocating memory assigned to pages, pager and table
 void db_close(Table_t* table) {
     Pager_t* pager = table->pager;
     uint32_t num_full_pages = table->num_rows / ROW_PER_PAGE;
 
+    // Whole complete pages
     for (uint32_t i = 0; i < num_full_pages; i ++) {
         if(pager->pages[i] == NULL) {
         continue;
@@ -135,6 +155,7 @@ void db_close(Table_t* table) {
         pager->pages[i] = NULL;
     }
 
+    // Partial Pages
     uint32_t num_additional_row = table->num_rows % ROW_PER_PAGE;
     if (num_additional_row > 0) {
         uint32_t page_num = num_full_pages;
@@ -159,5 +180,23 @@ void db_close(Table_t* table) {
     }
     free(pager);
     free(table);
+}
+
+Cursor_t* table_start(Table_t* table){
+    Cursor_t* cursor = malloc(sizeof(Cursor_t));
+    cursor->table = table;
+    cursor->row_num = 0;
+    cursor->end_of_table = table->num_rows == 0;
+
+    return cursor;
+}
+
+Cursor_t* table_end(Table_t* table) {
+    Cursor_t* cursor = malloc(sizeof(Cursor_t));
+    cursor->table =table;
+    cursor->row_num =table->num_rows;
+    cursor->end_of_table = true;
+
+    return cursor;
 }
 
